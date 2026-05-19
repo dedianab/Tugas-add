@@ -1,0 +1,57 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+#parameter
+
+Fs= 500 #Frequency sampling
+T= 1/Fs # period sampling
+L= 1000 # Panjang total sinyal
+t= np.arange(0, L) * T
+
+#Simulasi seismic signal
+f1, f2, f3 = 10, 30, 60 
+signal = np.sin(2*np.pi*f1*t) + 0.7*np.sin(2*np.pi*f2*t) + 0.5*np.sin(2*np.pi*f3*t)
+
+#add random noise
+noise= 0.5*np.random.randn(L)
+seismic_trace = signal + noise
+
+#Time domain plot
+plt.figure(figsize=(10,3))
+plt.plot(t, seismic_trace, 'k')
+plt.title('Simulated Seismic Trace – Time Domain')
+plt.xlabel('Time [s]')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.show()
+
+#frequency spectrum using FFT
+Y= np.fft.fft(seismic_trace)
+P2= np.abs(Y/L)
+P1= P2[:L//2+1]
+P1[1:-1] = 2*P1[1:-1]
+f= Fs * np.arange(0, L//2+1)/L
+
+plt.figure(figsize=(10,3))
+plt.plot(f, P1, 'r')
+plt.title('Frequency Spectrum of Seismic Trace')
+plt.xlabel('Frequency [Hz]')
+plt.ylabel('|Amplitude|')
+plt.grid(True)
+plt.show()
+
+#REMOVE 60 HZ COMPONENT AND IFFT
+idx_60hz = np.argmin(np.abs(f-60))
+Y_filtered = Y.copy()
+Y_filtered[idx_60hz] = 0
+Y_filtered[-idx_60hz] = 0
+seismic_trace_filtered = np.fft.ifft(Y_filtered).real
+
+plt.figure(figsize=(10,3))
+plt.plot(t, seismic_trace_filtered, 'b')
+plt.title('Seismic Trace after Removing 60 Hz Component')
+plt.xlabel('Time [s]')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.show()                   
+
