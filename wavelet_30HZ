@@ -1,0 +1,59 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.signal import ricker, morlet
+
+#parameter
+dt= 0.001
+t_wavelet= np.arange(-0.1, 0.1, dt)
+f_ricker= 30 #f dominan ricker wavelet
+
+#generate ricker wavelet
+
+w_ricker = (1-2*(np.pi*f_ricker*t_wavelet)**2)* np.exp(-(np.pi*f_ricker*t_wavelet)**2)
+plt.figure(figsize=(5,3))
+plt.plot(w_ricker, t_wavelet, 'b', linewidth=1)
+plt.gca().invert_yaxis()
+plt.title('Ricker Wavelet (30 Hz)')
+plt.xlabel('Amplitude')
+plt.ylabel('Time [s]')
+plt.grid(True)
+plt.show()
+
+#wavelet morlet
+f_morlet = 30
+w_morlet = morlet(len(t_wavelet), w=6, s=1/(2*np.pi*f_morlet), complete=True).real
+plt.figure(figsize=(5,3))
+plt.plot(w_morlet, t_wavelet, 'b', linewidth=1)
+plt.gca().invert_yaxis()
+plt.title('morlet Wavelet (30 Hz)')
+plt.xlabel('Amplitude')
+plt.ylabel('Time [s]')
+plt.grid(True)
+plt.show()
+
+#construct synthetic reflectivity series
+
+n= 200
+reflectivity = np.zeros(n)
+reflectivity [[30, 70, 120, 160]] = [0.6, -0.4, 0.8, -0.5]
+t2= np.arange(0, n)*dt
+
+plt.figure(figsize=(5,3))
+plt.plot(reflectivity, t2, 'r', linewidth=1)
+plt.gca().invert_yaxis()
+plt.title('Synthetic Reflectivity Series')
+plt.xlabel('Reflection Coefficient')
+plt.ylabel('Time [s]')
+plt.grid(True)
+plt.show()
+
+# convolve wavelet with reflectivity to generate seismic trace
+seismic_trace_synthetic = np.convolve(reflectivity, w_ricker, mode='same')
+plt.figure(figsize=(5,3))
+plt.plot(seismic_trace_synthetic, t2, 'k', linewidth=1)
+plt.gca().invert_yaxis()
+plt.title('Synthetic Seismic Trace (Ricker Wavelet)')
+plt.xlabel('Amplitude')
+plt.ylabel('Time [s]')
+plt.grid(True)
+plt.show()
