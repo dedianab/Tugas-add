@@ -40,16 +40,16 @@ plt.ylabel('|Amplitude|')
 plt.grid(True)
 plt.show()
 
-#REMOVE 60 HZ COMPONENT AND IFFT
-idx_60hz = np.argmin(np.abs(f-60))
+#REMOVE 10 HZ COMPONENT AND IFFT
+idx_10hz = np.argmin(np.abs(f-10))
 Y_filtered = Y.copy()
-Y_filtered[idx_60hz] = 0
-Y_filtered[-idx_60hz] = 0
+Y_filtered[idx_10hz] = 0
+Y_filtered[-idx_10hz] = 0
 seismic_trace_filtered = np.fft.ifft(Y_filtered).real
 
 plt.figure(figsize=(10,3))
 plt.plot(t, seismic_trace_filtered, 'b')
-plt.title('Seismic Trace after Removing 60 Hz Component')
+plt.title('Seismic Trace after Removing 10 Hz Component')
 plt.xlabel('Time [s]')
 plt.ylabel('Amplitude')
 plt.grid(True)
